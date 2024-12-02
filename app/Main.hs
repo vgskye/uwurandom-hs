@@ -76,16 +76,16 @@ uniformEnumExcept excl g = let
         then uniformEnumExcept excl nextRand
         else (tried, nextRand)
 
-generate :: RandomGen g => UwurandomOp -> g -> (L.Text, g)
+generate :: RandomGen g => UwurandomOp -> g -> L.Text
 generate state g = let
     (first, nextRand) = genOp state g
     (nextState, nextNextRand) = uniformEnumExcept state nextRand
-    (rest, nextNextNextRand) = generate nextState nextNextRand
-    in (L.append first rest, nextNextNextRand)
+    rest = generate nextState nextNextRand
+    in L.append first rest
 
 main :: IO ()
 main = do
    gen <- newStdGen
    let (initState, newGen) = uniformEnum gen
-   let (generated, _) = generate initState newGen
+   let generated = generate initState newGen
    LIO.putStr generated
